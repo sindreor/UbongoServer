@@ -49,6 +49,15 @@ public class GameHolder {
         System.out.println("Done ...");
     }
 
+    public void getDifficulty(String name, String pin, PrintWriter out, int callId){
+        System.out.println("\nCalled method: 'getDifficulty'.  Arguments: Name " + name +"Pin " + pin);
+        ResponsePackage responsePackage=new ResponsePackage(callId, 200,games.get(pin).getDifficulty()+"",null);
+        String json =gson.toJson(responsePackage);
+        out.println(json);
+        out.flush();
+        System.out.println("Done...");
+    }
+
     public void joinPlayer(String name, String pin, boolean ownerStatus, PrintWriter out, int callId) {
         /**keep the name in ArrayList
          notify everyone already in the game by returning ArrayList of names
@@ -66,7 +75,7 @@ public class GameHolder {
 
             ArrayList<String> playersName = generatePlayersName(game);
             notifyEveryone(callId, game, playersName.toString());
-            notifyEveryone(3,game,game.getDifficulty()+"");//Edit
+
         }
         System.out.println("Done ...");
     }
@@ -162,6 +171,7 @@ public class GameHolder {
                         System.out.println("Starting the game ...");
                         game.setStatus(true);
 
+                        //Send boardID to clients:
                         String boardID="";
                         Random rand=new Random();
                         if(game.getDifficulty()==0){
@@ -175,6 +185,7 @@ public class GameHolder {
                         }
 
                         notifyEveryone(callId, game, boardID);
+                        //##########
                     } else {
                         noPermissionHandler(callId, out);
                     }

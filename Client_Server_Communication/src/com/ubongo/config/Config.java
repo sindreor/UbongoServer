@@ -14,6 +14,6 @@ public class Config {
     // <Void, Void, Void> against unchecked execute call
     // device should be connected to the internet
     //public static final String HOST = "129.241.123.122";//home
-    public static final String HOST = "10.22.4.58"; //ntnu 27, 102
+    public static final String HOST = "129.241.229.18"; //ntnu 27, 102
     public static final int PORT = 7777;
 }

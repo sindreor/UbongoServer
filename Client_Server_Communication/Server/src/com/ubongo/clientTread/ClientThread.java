@@ -59,6 +59,8 @@ public class ClientThread extends Thread {
                         // get argument name, pin
                         GameHolder.getInstance().removePlayer(data.getName(), data.getPin(), out, 7);
                         break;
+                    case 8:
+                        GameHolder.getInstance().getDifficulty(data.getName(),data.getPin(),out,8);
                     default:
                         System.out.println("\nCannot recognize the called method");
                         break;
