@@ -164,14 +164,15 @@ public class GameHolder {
 
                         String boardID="";
                         Random rand=new Random();
+                        int randInt = rand.nextInt(5);
                         if(game.getDifficulty()==0){
-                            boardID="0"+easy[rand.nextInt(easy.length-1)];
+                            boardID="0" + randInt;//+easy[rand.nextInt(easy.length-1)];
                         }
                         else if(game.getDifficulty()==1){
-                            boardID="1"+medium[rand.nextInt(medium.length-1)];
+                            boardID="1" + randInt; //+medium[rand.nextInt(medium.length-1)];
                         }
                         else if(game.getDifficulty()==2){
-                            boardID="2"+hard[rand.nextInt(hard.length-1)];
+                            boardID="2" + randInt; //+hard[rand.nextInt(hard.length-1)];
                         }
 
                         notifyEveryone(callId, game, boardID);
