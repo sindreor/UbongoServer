@@ -164,7 +164,7 @@ public class GameHolder {
 
                         String boardID="";
                         Random rand=new Random();
-                        int randInt = rand.nextInt(5);
+                        int randInt = rand.nextInt(3);
                         if(game.getDifficulty()==0){
                             boardID="0" + randInt;//+easy[rand.nextInt(easy.length-1)];
                         }
