@@ -22,9 +22,7 @@ public class GameHolder {
     private int uniqueId = 1001;
     private Gson gson;
     private HashMap<String, Game> games = new HashMap<String, Game>();
-    private String[] easy={"0","1"};
-    private String[] medium={"0","1"};
-    private String[] hard={"0","1"};
+
 
     public static GameHolder getInstance() {
         return ourInstance;
@@ -34,6 +32,12 @@ public class GameHolder {
         gson = new Gson();
     }
 
+    /**
+     *Create new game and generate new unused pin and return to the requester
+     * @param name name of the player
+     * @param out out-stream used to send the information over the socket to the requester of the information
+     * @param callId identificator for the type of request/response
+     */
     public void startLobby(String name, PrintWriter out, int callId) {
         /**do not add into the vector
          just generate pin and return that
@@ -49,6 +53,13 @@ public class GameHolder {
         System.out.println("Done ...");
     }
 
+    /**
+     *Method called to generate a returnPackage containing the difficulty for a game
+     * @param name name of the player
+     * @param pin pin for the game
+     * @param out out-stream used to send the information over the socket to the requester of the information
+     * @param callId identificator for the type of request/response
+     */
     public void getDifficulty(String name, String pin, PrintWriter out, int callId){
         System.out.println("\nCalled method: 'getDifficulty'.  Arguments: Name " + name +"Pin " + pin);
         ResponsePackage responsePackage=new ResponsePackage(callId, 200,games.get(pin).getDifficulty()+"",null);
@@ -58,6 +69,12 @@ public class GameHolder {
         System.out.println("Done...");
     }
 
+    /**
+     *Method that adds a player to the playerlist for a specified game and returns the playerlist for the game
+     * @param name name of the player
+     * @param out out-stream used to send the information over the socket to the requester of the information
+     * @param callId identificator for the type of request/response
+     */
     public void joinPlayer(String name, String pin, boolean ownerStatus, PrintWriter out, int callId) {
         /**keep the name in ArrayList
          notify everyone already in the game by returning ArrayList of names
@@ -81,6 +98,12 @@ public class GameHolder {
     }
 
 
+    /**
+     *Sends the winner of a game to all the players in the game and then ends the game
+     * @param name name of the player
+     * @param out out-stream used to send the information over the socket to the requester of the information
+     * @param callId identificator for the type of request/response
+     */
     public void finishGame(String name, String pin, PrintWriter out, int callId) {
         /**
          * send the winner name to everyone
@@ -105,6 +128,12 @@ public class GameHolder {
         System.out.println("Done ...");
     }
 
+    /**
+     *Takes a player out of the game, deletes the game if the game is empty, notifies everyone that the player is out of the game
+     * @param name name of the player
+     * @param out out-stream used to send the information over the socket to the requester of the information
+     * @param callId identificator for the type of request/response
+     */
     public void leaveGame(String name, String pin, PrintWriter out, int callId) {
         /**
          * take out this guy out of the Array List
@@ -140,6 +169,12 @@ public class GameHolder {
         System.out.println("Done ...");
     }
 
+    /**
+     *Starts a game and notifies all the players waiting for it to start by sending a board ID based on the difficulty for the game
+     * @param name name of the player
+     * @param out out-stream used to send the information over the socket to the requester of the information
+     * @param callId identificator for the type of request/response
+     */
     public void startGame(String name, String pin, PrintWriter out, int callId) {
         /**
          * only owner. check it here
@@ -200,6 +235,12 @@ public class GameHolder {
         System.out.println("Done ...");
     }
 
+    /**
+     *Removes a player from a game, notify all the players that the player left by sending the updated playerlist for the game
+     * @param name name of the player
+     * @param out out-stream used to send the information over the socket to the requester of the information
+     * @param callId identificator for the type of request/response
+     */
     public void removePlayer(String name, String pin, PrintWriter out, int callId) {
         /**
          * this method can be called only before starting the game
@@ -263,6 +304,11 @@ public class GameHolder {
     }
 
 
+    /**
+     * Sets the difficulty for the game and notify all the playyers in the game by sending the uodated difficulty value.
+     * @param out out-stream used to send the information over the socket to the requester of the information
+     * @param callId identificator for the type of request/response
+     */
     public void setDifficulty(String difficult, String pin, PrintWriter out, int callId) {
         /** diff: int range 0-2. pin not sure.
          no need to check owner or not. limited from ui
@@ -287,13 +333,19 @@ public class GameHolder {
     }
 
     /**
-     * helpers *
+     * Generates unique ID for a game
+     * @return The unique pin
      */
     private String generateUniqueId() {
         //String uniqueID = UUID.randomUUID().toString();
         return Integer.toString(uniqueId++);
     }
 
+    /**
+     *Mathos handling the case if a game requested does not exist
+     * @param out out-stream used to send the information over the socket to the requester of the information
+     * @param callId identificator for the type of request/response
+     */
     private void gameNullHandler(int callId, PrintWriter out){
         System.out.println("Could NOT find such game. Existing games at this moment");
         for (Map.Entry m : games.entrySet()) {
@@ -306,6 +358,9 @@ public class GameHolder {
         out.flush();
     }
 
+    /**
+     *Logs that the game was changed
+     */
     private void gameExistLogger(Game game){
         System.out.print("Game exists. Current players are ...  ");
         for (Player player : game.getPlayers()) {
@@ -313,6 +368,11 @@ public class GameHolder {
         }
     }
 
+    /**
+     *Method handling the case if an already started game is requested to start again
+     * @param out out-stream used to send the information over the socket to the requester of the information
+     * @param callId identificator for the type of request/response
+     */
     private void gameStartedHandler(int callId, PrintWriter out, String subString){
         System.out.println("Game with specified PIN already started ...");
         System.out.println("Sending back Response Status 404 : Game with specified PIN already started. " + subString + " ...");
@@ -322,6 +382,11 @@ public class GameHolder {
         out.flush();
     }
 
+    /**
+     *Method handling the case if someone try to end a game that has not been started yet
+     * @param out out-stream used to send the information over the socket to the requester of the information
+     * @param callId identificator for the type of request/response
+     */
     private void gameNOTStartedHandler(int callId, PrintWriter out){
         System.out.println("Game with specified PIN is not even started ...");
         System.out.println("Sending back Response Status 404 : Game with specified PIN is not even started ...");
@@ -331,6 +396,12 @@ public class GameHolder {
         out.flush();
     }
 
+    /**
+     *Method for notififying everyone in a game about something
+     * @param callId identificator for the type of request/response
+     * @param game game that holds all the players that should be notified
+     * @param responseContent The content to notify everyone about
+     */
     private void notifyEveryone(int callId, Game game, String responseContent){
         System.out.println("Notifying everyone");
         ResponsePackage responsePackage = new ResponsePackage(callId, 200, responseContent, null);
@@ -341,6 +412,11 @@ public class GameHolder {
         }
     }
 
+    /**
+     *Generates a playerlist from a game
+     * @param game The game whiich the player should be added to
+     * @return playerlist with players
+     */
     private ArrayList<String> generatePlayersName(Game game){
         System.out.println("Generating Players Name Response Content ...");
         ArrayList<String> playersName = new ArrayList<String>();
@@ -350,6 +426,11 @@ public class GameHolder {
         return playersName;
     }
 
+    /**
+     *Method handling the case if a player was not found in a game
+     * @param out out-stream used to send the information over the socket to the requester of the information
+     * @param callId identificator for the type of request/response
+     */
     private void noPlayerHandler(int callId, PrintWriter out){
         System.out.println("Could not find such player in specified game ...");
         System.out.println("Sending back Response Status 404 : Could NOT find such player in specified game ...");
@@ -358,6 +439,11 @@ public class GameHolder {
         out.println(json);
     }
 
+    /**
+     *Mehod handling the case when a player tries to change settings that only an owner can change
+     * @param out out-stream used to send the information over the socket to the requester of the information
+     * @param callId identificator for the type of request/response
+     */
     private void noPermissionHandler(int callId, PrintWriter out){
         System.out.println("Player does NOT have such permissions ...");
         System.out.println("Sending back Response Status 404 : Player does NOT have such permissions ...");
